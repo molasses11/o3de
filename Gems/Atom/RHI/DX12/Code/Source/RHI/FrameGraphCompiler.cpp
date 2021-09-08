@@ -469,6 +469,8 @@ namespace AZ
             ResourceTransitionLoggerNull logger(imageFrameAttachment.GetId());
 #endif
 
+            AZ_ATOM_PROFILE_FUNCTION("RHI", "FrameGraphCompiler: CompileImageBarriers (DX12)");
+
             Image& image = static_cast<Image&>(*imageFrameAttachment.GetImage());
             RHI::ImageScopeAttachment* scopeAttachment = imageFrameAttachment.GetFirstScopeAttachment();
 
@@ -528,7 +530,6 @@ namespace AZ
                 transition.StateAfter = GetResourceState(*scopeAttachment);
                 logger.SetStateAfter(transition.StateAfter);
 
-                const bool isCopyQueueAfter = scopeAfter.GetHardwareQueueClass() == RHI::HardwareQueueClass::Copy;
                 RHI::ImageSubresourceRange viewRange = RHI::ImageSubresourceRange(scopeAttachment->GetImageView()->GetDescriptor());
                 for (const auto& subresourceState : image.GetAttachmentStateByIndex(&viewRange))
                 {

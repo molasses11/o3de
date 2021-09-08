@@ -5,8 +5,9 @@ __pycache__
 AssetProcessorTemp/**
 [Bb]uild/**
 [Oo]ut/**
+CMakeUserPresets.json
 [Cc]ache/
-/install/
+/[Ii]nstall/
 Editor/EditorEventLog.xml
 Editor/EditorLayout.xml
 **/*egg-info/**
@@ -25,4 +26,4 @@ TestResults/**
 *.swatches
 /imgui.ini
 /scripts/project_manager/logs/
-third-party
+/AutomatedTesting/Gem/PythonTests/scripting/TestResults

@@ -120,7 +120,6 @@ namespace ScriptCanvasEditor
             m_variableName = m_variable->GetVariableName();
 
             const AZStd::string variableTypeName = TranslationHelper::GetSafeTypeName(m_variable->GetDatum()->GetType());
-            m_variable->SetDisplayName(variableTypeName);
 
             m_componentTitle = AZStd::string::format("%s Variable", variableTypeName.data());
 
@@ -259,7 +258,7 @@ namespace ScriptCanvasEditor
 
         QObject::connect(pasteAction,
             &QAction::triggered,
-            [dockWidget, varId](bool)
+            [dockWidget](bool)
         {
             GraphVariablesTableView::HandleVariablePaste(dockWidget->GetActiveScriptCanvasId());
         });
