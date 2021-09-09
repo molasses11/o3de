@@ -25,4 +25,3 @@ TestResults/**
 *.swatches
 /imgui.ini
 /scripts/project_manager/logs/
-third-party
