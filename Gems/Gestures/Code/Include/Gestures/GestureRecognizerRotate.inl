@@ -95,7 +95,7 @@ inline bool Gestures::RecognizerRotate::OnPressedEvent(const AZ::Vector2& screen
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 inline bool Gestures::RecognizerRotate::OnDownEvent(const AZ::Vector2& screenPosition, uint32_t pointerIndex)
 {
-    if (!gEnv || !gEnv->pTimer || pointerIndex > s_maxRotatePointerIndex)
+    if (pointerIndex > s_maxRotatePointerIndex)
     {
         return false;
     }
