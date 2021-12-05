@@ -6,16 +6,15 @@
  *
  */
 
-#include <AzManipulatorTestFramework/ViewportInteraction.h>
-#include <AzFramework/Viewport/ViewportScreen.h>
 #include <AzFramework/Viewport/CameraState.h>
+#include <AzFramework/Viewport/ViewportScreen.h>
+#include <AzManipulatorTestFramework/ViewportInteraction.h>
 #include <AzToolsFramework/Manipulators/ManipulatorBus.h>
 
 namespace AzManipulatorTestFramework
 {
     // Null debug display for dummy draw calls
-    class NullDebugDisplayRequests
-        : public AzFramework::DebugDisplayRequests
+    class NullDebugDisplayRequests : public AzFramework::DebugDisplayRequests
     {
     public:
         virtual ~NullDebugDisplayRequests() = default;
@@ -76,6 +75,11 @@ namespace AzManipulatorTestFramework
         return 0.1f;
     }
 
+    bool ViewportInteraction::StickySelectEnabled() const
+    {
+        return m_stickySelect;
+    }
+
     void ViewportInteraction::FindVisibleEntities(AZStd::vector<AZ::EntityId>& visibleEntitiesOut)
     {
         visibleEntitiesOut.assign(m_entityVisibilityQuery.Begin(), m_entityVisibilityQuery.End());
@@ -101,24 +105,24 @@ namespace AzManipulatorTestFramework
         return *m_nullDebugDisplayRequests;
     }
 
-    void ViewportInteraction::EnableGridSnaping()
+    void ViewportInteraction::SetGridSnapping(const bool enabled)
     {
-        m_gridSnapping = true;
+        m_gridSnapping = enabled;
     }
 
-    void ViewportInteraction::DisableGridSnaping()
+    void ViewportInteraction::SetAngularSnapping(const bool enabled)
     {
-        m_gridSnapping = false;
+        m_angularSnapping = enabled;
     }
 
-    void ViewportInteraction::EnableAngularSnaping()
+    void ViewportInteraction::SetStickySelect(const bool enabled)
     {
-        m_angularSnapping = true;
+        m_stickySelect = enabled;
     }
 
-    void ViewportInteraction::DisableAngularSnaping()
+    AZ::Vector3 ViewportInteraction::DefaultEditorCameraPosition() const
     {
-        m_angularSnapping = false;
+        return {};
     }
 
     void ViewportInteraction::SetGridSize(float size)
@@ -131,25 +135,24 @@ namespace AzManipulatorTestFramework
         m_angularStep = step;
     }
 
-    int ViewportInteraction::GetViewportId() const
+    AzFramework::ViewportId ViewportInteraction::GetViewportId() const
     {
         return m_viewportId;
     }
 
-    AZStd::optional<AZ::Vector3> ViewportInteraction::ViewportScreenToWorld(
-        [[maybe_unused]] const AzFramework::ScreenPoint& screenPosition, [[maybe_unused]] float depth)
+    AZ::Vector3 ViewportInteraction::ViewportScreenToWorld([[maybe_unused]] const AzFramework::ScreenPoint& screenPosition)
     {
-        return {};
+        return AzFramework::ScreenToWorld(screenPosition, m_cameraState);
     }
 
-    AZStd::optional<AzToolsFramework::ViewportInteraction::ProjectedViewportRay> ViewportInteraction::ViewportScreenToWorldRay(
+    AzToolsFramework::ViewportInteraction::ProjectedViewportRay ViewportInteraction::ViewportScreenToWorldRay(
         [[maybe_unused]] const AzFramework::ScreenPoint& screenPosition)
     {
-        return {};
+        return AzToolsFramework::ViewportInteraction::ViewportScreenToWorldRay(m_cameraState, screenPosition);
     }
 
     float ViewportInteraction::DeviceScalingFactor()
     {
         return 1.0f;
     }
-}// namespace AzManipulatorTestFramework
+} // namespace AzManipulatorTestFramework

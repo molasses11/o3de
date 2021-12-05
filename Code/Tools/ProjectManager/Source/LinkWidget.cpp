@@ -7,6 +7,11 @@
  */
 
 #include <LinkWidget.h>
+#include <ExternalLinkDialog.h>
+#include <ProjectManagerSettings.h>
+
+#include <AzCore/Settings/SettingsRegistry.h>
+
 #include <QDesktopServices>
 #include <QEvent>
 #include <QMouseEvent>
@@ -14,9 +19,10 @@
 
 namespace O3DE::ProjectManager
 {
-    LinkLabel::LinkLabel(const QString& text, const QUrl& url, QWidget* parent)
+    LinkLabel::LinkLabel(const QString& text, const QUrl& url, int fontSize, QWidget* parent)
         : QLabel(text, parent)
         , m_url(url)
+        , m_fontSize(fontSize)
     {
         SetDefaultStyle();
     }
@@ -25,7 +31,29 @@ namespace O3DE::ProjectManager
     {
         if (m_url.isValid())
         {
-            QDesktopServices::openUrl(m_url);
+            // Check if user request not to be shown external link warning dialog
+            bool skipDialog = false;
+            auto settingsRegistry = AZ::SettingsRegistry::Get();
+
+            if (settingsRegistry)
+            {
+                QString settingsKey = GetExternalLinkWarningKey();
+                settingsRegistry->Get(skipDialog, settingsKey.toStdString().c_str());
+            }
+
+            if (!skipDialog)
+            {
+                // Style does not apply if LinkLabel is parent so use parentWidget as parent instead
+                ExternalLinkDialog* linkDialog = new ExternalLinkDialog(m_url.toString(), parentWidget());
+                if (linkDialog->exec() == QDialog::Accepted)
+                {
+                    QDesktopServices::openUrl(m_url);
+                }
+            }
+            else
+            {
+                QDesktopServices::openUrl(m_url);
+            }
         }
 
         emit clicked();
@@ -33,7 +61,7 @@ namespace O3DE::ProjectManager
 
     void LinkLabel::enterEvent([[maybe_unused]] QEvent* event)
     {
-        setStyleSheet("font-size: 10px; color: #94D2FF; text-decoration: underline;");
+        setStyleSheet(QString("font-size: %1px; color: #94D2FF; text-decoration: underline;").arg(m_fontSize));
     }
 
     void LinkLabel::leaveEvent([[maybe_unused]] QEvent* event)
@@ -48,6 +76,6 @@ namespace O3DE::ProjectManager
 
     void LinkLabel::SetDefaultStyle()
     {
-        setStyleSheet("font-size: 10px; color: #94D2FF;");
+        setStyleSheet(QString("font-size: %1px; color: #94D2FF;").arg(m_fontSize));
     }
 } // namespace O3DE::ProjectManager

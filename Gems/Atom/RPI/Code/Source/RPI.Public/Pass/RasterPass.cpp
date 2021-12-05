@@ -216,8 +216,6 @@ namespace AZ
 
         void RasterPass::CompileResources(const RHI::FrameGraphCompileContext& context)
         {
-            AZ_PROFILE_FUNCTION(RPI);
-
             if (m_shaderResourceGroup == nullptr)
             {
                 return;
